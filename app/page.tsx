@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const products = [
   {
     title: "AI Pharmacy Growth Kit",
@@ -56,9 +58,12 @@ export default function Home() {
           <a href="#pricing" className="bg-white text-black px-8 py-4 rounded-full font-bold">
             Start Subscription
           </a>
-          <a href="#products" className="border border-white/20 px-8 py-4 rounded-full font-bold">
-            See What’s Included
-          </a>
+          <Link
+  href="/tools/campaign-generator"
+  className="border border-white/20 px-8 py-4 rounded-full font-bold"
+>
+  Try AI Generator
+</Link>
         </div>
 
         <div className="grid md:grid-cols-3 gap-4 mt-14 max-w-4xl">
