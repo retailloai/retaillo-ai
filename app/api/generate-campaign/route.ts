@@ -1,47 +1,59 @@
-import { NextResponse } from "next/server";
+import OpenAI from "openai";
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    const campaign = `
-🚀 AI Retail Campaign
+    const prompt = `
+You are an expert retail marketing strategist.
 
-Business Type:
-${body.business}
+The platform is built for pharmacies first, but the campaign must adapt to any retail industry.
 
-Goal:
-${body.goal}
+Create a professional, high-converting marketing campaign.
 
-Promotion:
-${body.offer}
+Business / Industry: ${body.business}
+Campaign Type: ${body.campaignType}
+Offer: ${body.offer}
 
-Generated Campaign:
+Generate:
+1. SMS Promotion
+2. Facebook Post
+3. Instagram Caption
+4. Email Subject Line
+5. Short Email Campaign
+6. Staff Upsell Script
+7. In-Store Promotion Headline
+8. Shelf Talker / Poster Copy
+9. Product Bundle Idea
+10. Call-To-Action
 
-Headline:
-🔥 ${body.business} Exclusive Offer This Week
+Rules:
+- Adapt the tone to the business industry
+- If it is pharmacy-related, avoid medical claims
+- Keep copy practical and retail-friendly
+- Make it easy for staff to use immediately
+- Use short, clear, high-converting language
+- Use emojis only where appropriate
+- Make the output professional, not gimmicky
 
-SMS:
-Limited time only — ${body.offer}. Visit us today before stock runs out.
+Format the response with clear headings.
+`;
 
-Instagram Caption:
-Big savings now available at ${body.business}. ${body.offer} — available for a limited time only.
-
-Email Subject:
-Special Offer Inside – ${body.offer}
-
-Poster CTA:
-SHOP NOW
-LIMITED TIME
-    `;
-
-    return NextResponse.json({
-      result: campaign,
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4.1-mini",
+      messages: [{ role: "user", content: prompt }],
     });
-  } catch (error) {
-    return NextResponse.json(
-      { error: "Failed to generate campaign" },
-      { status: 500 }
-    );
+
+    return Response.json({
+      result: completion.choices[0]?.message?.content || "No campaign returned.",
+    });
+  } catch (error: any) {
+    return Response.json({
+      result: error?.message || "Something went wrong.",
+    });
   }
 }
